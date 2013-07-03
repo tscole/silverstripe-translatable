@@ -1702,11 +1702,9 @@ class Translatable extends DataExtension implements PermissionProvider {
 	 * @return bool
      */
 	public function augmentValidURLSegment() {
-		$reEnableFilter = false;
-		if(self::locale_filter_enabled()) {
-			self::disable_locale_filter();
-			$reEnableFilter = true;
-		}
+		
+		self::enable_locale_filter();
+		
 		$IDFilter     = ($this->owner->ID) ? "AND \"SiteTree\".\"ID\" <> {$this->owner->ID}" :  null;
 		$parentFilter = null;
 
@@ -1721,8 +1719,6 @@ class Translatable extends DataExtension implements PermissionProvider {
 		$existingPage = SiteTree::get()
 			// disable get_one cache, as this otherwise may pick up results from when locale_filter was on
 			->where("\"URLSegment\" = '{$this->owner->URLSegment}' $IDFilter $parentFilter")->First();
-		
-		if($reEnableFilter) self::enable_locale_filter();
 		
 		return !$existingPage;
 	}
