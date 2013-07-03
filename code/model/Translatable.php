@@ -1372,7 +1372,7 @@ class Translatable extends DataExtension implements PermissionProvider {
 		} else {
 			$urlSegment = $newTranslation->URLSegment;
 		}
-		$newTranslation->URLSegment = $urlSegment . '-' . i18n::convert_rfc1766($locale);
+		$newTranslation->URLSegment = $urlSegment;
 		// hacky way to set an existing translation group in onAfterWrite()
 		$translationGroupID = $this->getTranslationGroup();
 		$newTranslation->_TranslationGroupID = $translationGroupID ? $translationGroupID : $this->owner->ID;
