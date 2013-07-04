@@ -1376,8 +1376,29 @@ class Translatable extends DataExtension implements PermissionProvider {
 		// hacky way to set an existing translation group in onAfterWrite()
 		$translationGroupID = $this->getTranslationGroup();
 		$newTranslation->_TranslationGroupID = $translationGroupID ? $translationGroupID : $this->owner->ID;
-		if($saveTranslation) $newTranslation->write();
+		if($saveTranslation) {
+			$newTranslation->write();
 		
+		// Duplicates a pages related dataobjects
+		
+			//duplicate has many items 
+			foreach ($originalPage->has_many() as $key => $className) { 
+			foreach ($originalPage->{$key}() as $item) { 
+			$newField = $item->duplicate(); 
+			$id = get_class($originalPage) . 'ID'; 
+			$newField->{$id} = $newTranslation->ID; 
+			$newField->write(); 
+			$newTranslation->write();
+			} 
+			}
+			
+			//duplicate many_many items 
+			foreach( $originalPage->many_many() as $key => $className ){ 
+			$newTranslation->{$key}()->addMany($originalPage->{$key}()->getIdList()); 
+			}
+			$newTranslation->write();
+		//
+		}
 		// run callback on page for translation related hooks
 		$newTranslation->invokeWithExtensions('onTranslatableCreate', $saveTranslation);
 		
