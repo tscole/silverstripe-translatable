@@ -1383,20 +1383,21 @@ class Translatable extends DataExtension implements PermissionProvider {
 		
 			//duplicate has many items 
 			foreach ($originalPage->has_many() as $key => $className) { 
-			foreach ($originalPage->{$key}() as $item) { 
-			$newField = $item->duplicate(); 
-			$id = get_class($originalPage) . 'ID'; 
-			$newField->{$id} = $newTranslation->ID; 
-			$newField->write(); 
-			$newTranslation->write();
-			} 
+				foreach ($originalPage->{$key}() as $item) { 
+				$newField = $item->duplicate(); 
+				$id = get_class($originalPage) . 'ID'; 
+				$newField->{$id} = $newTranslation->ID; 
+				$newField->write(); 
+				} 
 			}
 			
 			//duplicate many_many items 
 			foreach( $originalPage->many_many() as $key => $className ){ 
 			$newTranslation->{$key}()->addMany($originalPage->{$key}()->getIdList()); 
-			}
 			$newTranslation->write();
+			
+			}
+		
 		//
 		}
 		// run callback on page for translation related hooks
