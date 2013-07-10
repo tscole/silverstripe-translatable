@@ -1385,9 +1385,16 @@ class Translatable extends DataExtension implements PermissionProvider {
 			foreach ($originalPage->has_many() as $key => $className) { 
 				foreach ($originalPage->{$key}() as $item) { 
 				$newField = $item->duplicate(); 
-				$id = get_class($originalPage) . 'ID'; 
-				$newField->{$id} = $newTranslation->ID; 
-				$newField->write(); 
+				foreach ($item->has_one() as $thingKey => $thingValue){
+					$linkField = $thingKey . 'ID';
+					if ($item->{$linkField} == $originalPage->ID) {
+						$item->{$linkField} = $newTranslation->ID;
+						$item->write(); 
+					}
+				}
+				//$id = get_class($originalPage) . 'ID'; 
+				//$newField->{$id} = $newTranslation->ID; 
+				//$newField->write(); 
 				} 
 			}
 			
